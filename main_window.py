@@ -12,6 +12,7 @@ class DrawableWindow(QtWidgets.QMainWindow):
         self.label.setPixmap(canvas)
         self.setCentralWidget(self.label)
         self.draw_something()
+        self.last_x, self.last_y = None, None
 
     def _drawline(self):
         painter = QtGui.QPainter(self.label.pixmap())
@@ -50,7 +51,30 @@ class DrawableWindow(QtWidgets.QMainWindow):
         #self._drawline()
         #self._drawpoint()
         #self._drawpen()
-        self._drawdots()
+        #self._drawdots()
+        pass
+
+    def mouseMoveEvent(self, e):
+        if self.last_x is None:
+            self.last_x = e.x()
+            self.last_y = e.y()
+            return
+        
+        painter = QtGui.QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        pen.setWidth(3)
+        pen.setColor(QtGui.QColor('red'))
+        painter.setPen(pen)
+        painter.drawLine(self.last_x, self.last_y, e.x(), e.y())
+        painter.end()
+        self.update()
+
+        self.last_x = e.x()
+        self.last_y = e.y()
+
+    def mouseReleaseEvent(self, e):
+        self.last_x = None
+        self.last_y = None
 
 '''
 class PainterMainWindow(QMainWindow):
